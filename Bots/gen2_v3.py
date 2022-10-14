@@ -2,7 +2,10 @@ import chess
 import random
 import time
 from enum import Enum
-import Tables.v2 as Table
+import Evaluators.Table.v1 as Table
+import Evaluators.Checkmate.v1 as Checkmate
+import Evaluators.Pieces.v1 as Pieces
+import Evaluators.AttackDefend.v1 as AttactDefend
 
 class Weights(Enum):
     PICES_SCORE = 0
@@ -54,7 +57,7 @@ class Bot:
 
         for move in legal_moves:
             board.push(move)
-            result = self.__evaluateBoardDepth(board)
+            result = self.__AlphaBetaPruning(board)
             board.pop()
             if result > score:
                 score = result
@@ -64,7 +67,7 @@ class Bot:
 
         return bestmove
 
-    def __evaluateBoardDepth(self, board, depth_left = 3, alpha = -999999, beta = +999999):
+    def __AlphaBetaPruning(self, board, depth_left = 3, alpha = -999999, beta = +999999):
         if depth_left == 0:
             return self.__evaluateBoard(board)
         else:
@@ -73,7 +76,7 @@ class Bot:
                 bestScore = -99999999999
                 for move in board.legal_moves:
                     board.push(move)
-                    score = self.__evaluateBoardDepth(board, depth_left, alpha, beta)
+                    score = self.__AlphaBetaPruning(board, depth_left, alpha, beta)
                     board.pop()
                     bestScore = max(bestScore, score)
                     alpha = max(alpha, bestScore)
@@ -84,7 +87,7 @@ class Bot:
                 worstScore = 99999999999
                 for move in board.legal_moves:
                     board.push(move)
-                    score = self.__evaluateBoardDepth(board, depth_left, alpha, beta)
+                    score = self.__AlphaBetaPruning(board, depth_left, alpha, beta)
                     board.pop()
                     worstScore = min(worstScore, score)
                     beta = min(beta, worstScore)
@@ -92,52 +95,9 @@ class Bot:
                         break
                 return worstScore
 
-
     def __evaluateBoard(self, board):
-        ValueOfPiecesScore = self.__evaluateValueOfPiecesScore(board) * self.getWeight(Weights.PICES_SCORE)
+        ValueOfPiecesScore =   Pieces.evaluateValueOfPiecesScore(board, self.color) * self.getWeight(Weights.PICES_SCORE)
         position_score = Table.evaluatePositions(board, self.color) * self.getWeight(Weights.POSISIONS_SCORE)
-        defended_score = self.__evaluateIfDefended(board, board.move_stack[-1]) * self.getWeight(Weights.IS_DEFENDED)
-        checkmate_score = self.__evaluateCheckMate(board) * self.getWeight(Weights.IS_CHECKMATE)
+        defended_score = AttactDefend.evaluateIfDefended(board, board.move_stack[-1], self.color) * self.getWeight(Weights.IS_DEFENDED)
+        checkmate_score = Checkmate.evaluateCheckMate(board, self.color) * self.getWeight(Weights.IS_CHECKMATE)
         return ValueOfPiecesScore + defended_score + checkmate_score + position_score 
-
-
-    def __evaluateIfDefended(self, board,  move):
-        if board.is_attacked_by(self.color, move.to_square) and not board.is_attacked_by(not self.color, move.to_square):
-            return 2.0
-        elif board.is_attacked_by(self.color, move.to_square) or not board.is_attacked_by(not self.color, move.to_square):
-            return 1.0
-        else:
-            return 0.0
-
-    
-    def __evaluateCheckMate(self, board):
-        if board.is_checkmate() and board.turn != self.color:
-            return 5
-        elif board.is_checkmate():
-            return -5
-        else:
-            return 0
-
-
-
-            
-    ##=================VALUE OF PIECES SCORE==================##
-
-    def __evaluateValueOfPiecesScore(self, board):
-        whiteValue = self.__getValueOfPieces(board, chess.WHITE)
-        blackValue = self.__getValueOfPieces(board, chess.BLACK)
-        if self.color == chess.WHITE:
-         return whiteValue - blackValue
-        else:
-            return blackValue - whiteValue
-
-    def __getValueOfPieces(self, board, player):
-        value = len(board.pieces(chess.PAWN, player)) * 1
-        value += len(board.pieces(chess.KNIGHT, player)) * 3
-        value += len(board.pieces(chess.BISHOP, player)) * 3
-        value += len(board.pieces(chess.ROOK, player)) * 5
-        value += len(board.pieces(chess.QUEEN, player)) * 9
-        return value
-
-    ##========================================================##
-

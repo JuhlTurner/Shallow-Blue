@@ -67,8 +67,6 @@ def playGame(student, opponent, numberOfGames):
         print(board)
         print("Score:\n\t%s: %d (Wins: %d) \n\t%s: %d (Wins: %d)" % (student.name, student.totalScore, student.numberOfWins, opponent.name, opponent.totalScore, opponent.numberOfWins))
         #print("Calulating move for %s..." % playerName)
-            
-
 
     return student.numberOfWins - opponent.numberOfWins
     

@@ -29,13 +29,21 @@
     <Compile Include="Bots\gen2_v2.py" />
     <Compile Include="Bots\gen2_v3.py" />
     <Compile Include="bot_test.py" />
+    <Compile Include="Evaluators\AttackDefend\v1.py" />
+    <Compile Include="Evaluators\Checkmate\v1.py" />
+    <Compile Include="Evaluators\Pieces\v1.py" />
     <Compile Include="Shallow Blue.py" />
     <Compile Include="Tables\v1.py" />
-    <Compile Include="Tables\v2.py" />
+    <Compile Include="Evaluators\Table\v1.py" />
     <Compile Include="trainer.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Bots" />
+    <Folder Include="Evaluators\" />
+    <Folder Include="Evaluators\Checkmate\" />
+    <Folder Include="Evaluators\AttackDefend\" />
+    <Folder Include="Evaluators\Pieces\" />
+    <Folder Include="Evaluators\Table\" />
     <Folder Include="Tables" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
