@@ -1,8 +1,9 @@
 import chess
 import random
+import time
 from enum import Enum
 from functools import partial
-from chessbots.v9.pieceTables import PAWN_TABLE, KNIGHT_TABLE, BISHOP_TABLE, ROOK_TABLE, QUEEN_TABLE, KING_TABLE 
+from Tables.v1 import PAWN_TABLE, KNIGHT_TABLE, BISHOP_TABLE, ROOK_TABLE, QUEEN_TABLE, KING_TABLE 
 
 class Weights(Enum):
     PICES_SCORE = 0
@@ -18,6 +19,8 @@ class Bot:
         self.weights = weights
         self.color = 0
         self.mean_calc_time = 0.0
+        self.total_calc_time = 0.0
+        self.number_of_moves = 0.0
         if len(weights) == 0:
             for i in range (0, len(Weights)):
                 self.weights.append(1.0)
@@ -40,6 +43,8 @@ class Bot:
         return newWeights
 
     def selectMove(self, board):
+        start_time = time.time()
+        self.number_of_moves += 1
         bestmove = random.choice(list(board.legal_moves))
         self.color = board.turn
         score = 0
@@ -50,6 +55,8 @@ class Bot:
             if result > score:
                 score = result
                 bestmove = move
+        self.total_calc_time = self.total_calc_time + (time.time() - start_time)
+        self.mean_calc_time = self.total_calc_time/self.number_of_moves
         return bestmove
 
     #def evaluateBoard(self, move, board, turn):

@@ -2,21 +2,12 @@ import chess
 import os
 
 from Bots.gen2_v3 import Bot as Student
-from Bots.gen2_v2 import Bot as Opponent
+from Bots.gen1_v10 import Bot as Opponent
+import Evaluators.Pieces.v1 as Pieces
 
 def clearConsole():
     os.system('cls')
 
-def getValueOfPieces(board, player):
-    value = len(board.pieces(chess.PAWN, player)) * 1
-    value += len(board.pieces(chess.KNIGHT, player)) * 3
-    value += len(board.pieces(chess.BISHOP, player)) * 3
-    value += len(board.pieces(chess.ROOK, player)) * 5
-    value += len(board.pieces(chess.QUEEN, player)) * 9
-    return value
-
-def getScore(bot):
-    return bot.Score
 
 def evoTrainer():
     numberOfVariants = 50
@@ -49,8 +40,8 @@ def playGame(student, opponent, numberOfGames):
 
             board.push(move)
             clearConsole()
-            student.totalScore = getValueOfPieces(board, studentcolor)
-            opponent.totalScore = getValueOfPieces(board, not studentcolor)
+            student.totalScore = Pieces.getValueOfPieces(board, studentcolor)
+            opponent.totalScore = Pieces.getValueOfPieces(board, not studentcolor)
             print("Game %d of %d" % (i+1, numberOfGames))
             print(board)
             print("Score:\n\t%s: %d (Wins: %d, mean move time: %s) \n\t%s: %d (Wins: %d, mean move time: %s)" % (student.name, student.totalScore, student.numberOfWins, student.mean_calc_time, opponent.name, opponent.totalScore, opponent.numberOfWins, opponent.mean_calc_time))
