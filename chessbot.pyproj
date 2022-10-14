@@ -27,6 +27,7 @@
     <Compile Include="bot_test.py" />
     <Compile Include="Bots\gen2_v1.py" />
     <Compile Include="Bots\gen2_v2.py" />
+    <Compile Include="Tables\v2.py" />
     <Compile Include="Tables\v1.py" />
     <Compile Include="Bots\gen2_v3.py" />
     <Compile Include="Bots\gen1_v10.py" />

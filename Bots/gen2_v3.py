@@ -2,8 +2,7 @@ import chess
 import random
 import time
 from enum import Enum
-from functools import partial
-from Tables.v1 import PAWN_TABLE, KNIGHT_TABLE, BISHOP_TABLE, ROOK_TABLE, QUEEN_TABLE, KING_TABLE 
+import Tables.v2 as Table
 
 class Weights(Enum):
     PICES_SCORE = 0
@@ -96,7 +95,7 @@ class Bot:
 
     def __evaluateBoard(self, board):
         ValueOfPiecesScore = self.__evaluateValueOfPiecesScore(board) * self.getWeight(Weights.PICES_SCORE)
-        position_score = self.__evaluatePositions(board) * self.getWeight(Weights.POSISIONS_SCORE)
+        position_score = Table.evaluatePositions(board, self.color) * self.getWeight(Weights.POSISIONS_SCORE)
         defended_score = self.__evaluateIfDefended(board, board.move_stack[-1]) * self.getWeight(Weights.IS_DEFENDED)
         checkmate_score = self.__evaluateCheckMate(board) * self.getWeight(Weights.IS_CHECKMATE)
         return ValueOfPiecesScore + defended_score + checkmate_score + position_score 
@@ -119,31 +118,6 @@ class Bot:
         else:
             return 0
 
-    ##======================TABLE LOOKUP=====================##
-
-    def __evaluatePositions(self, board):
-        score = 0.0
-        score += sum([PAWN_TABLE[i] for i in board.pieces(chess.PAWN, chess.WHITE)])
-        score -= sum([PAWN_TABLE[chess.square_mirror(i)] for i in board.pieces(chess.PAWN, chess.BLACK)])
-
-        score += sum([KNIGHT_TABLE[i] for i in board.pieces(chess.KNIGHT, chess.WHITE)]) * 3
-        score -= sum([KNIGHT_TABLE[chess.square_mirror(i)] for i in board.pieces(chess.KNIGHT, chess.BLACK)]) * 3
-
-        score += sum([BISHOP_TABLE[i] for i in board.pieces(chess.BISHOP, chess.WHITE)]) * 3
-        score -= sum([BISHOP_TABLE[chess.square_mirror(i)] for i in board.pieces(chess.BISHOP, chess.BLACK)]) * 3
-    
-        score += sum([ROOK_TABLE[i] for i in board.pieces(chess.ROOK, chess.WHITE)]) * 5
-        score -= sum([ROOK_TABLE[chess.square_mirror(i)] for i in board.pieces(chess.ROOK, chess.BLACK)]) * 5
-
-        score += sum([QUEEN_TABLE[i] for i in board.pieces(chess.QUEEN, chess.WHITE)]) * 9
-        score -= sum([QUEEN_TABLE[chess.square_mirror(i)] for i in board.pieces(chess.QUEEN, chess.BLACK)]) * 9
-
-        score += sum([KING_TABLE[i] for i in board.pieces(chess.KING, chess.WHITE)]) * 4
-        score -= sum([KING_TABLE[chess.square_mirror(i)] for i in board.pieces(chess.KING, chess.BLACK)]) * 4
-        if self.color == chess.WHITE:
-            return score
-        else:
-            return -score
 
 
             
