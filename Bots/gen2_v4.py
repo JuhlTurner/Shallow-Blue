@@ -1,6 +1,7 @@
 import chess
 import random
 import time
+import threading
 from enum import Enum
 import Evaluators.Table.v1 as Table
 import Evaluators.Checkmate.v1 as Checkmate
@@ -15,7 +16,7 @@ class Weights(Enum):
 
 class Bot:
     def __init__(self, weights = [0.8268298942321526, 0.07805562253253272, 0.5324320602889405, 0.6138843173687217]):
-        self.name = "Gen2 V03"
+        self.name = "Gen2 V04"
         self.numberOfWins = 0.0
         self.Score = 0
         self.weights = weights
@@ -55,45 +56,55 @@ class Bot:
         self.color = board.turn
         score = -99999999999
 
-        for move in legal_moves:
-            board.push(move)
-            result = self.__AlphaBetaPruning(board)
-            board.pop()
-            if result > score:
-                score = result
-                bestmove = move
+        unused, bestmove = self.__AlphaBetaPruning(board, 4)
+
+        #for move in legal_moves:
+        #    board.push(move)
+        #    result, move = self.__AlphaBetaPruning(board)
+        #    board.pop()
+        #    if result > score:
+        #        score = result
+        #        bestmove = move
         self.total_calc_time = self.total_calc_time + (time.time() - start_time)
         self.mean_calc_time = self.total_calc_time/self.number_of_moves
 
         return bestmove
 
-    def __AlphaBetaPruning(self, board, depth_left = 3, alpha = -999999, beta = +999999):
+    def __AlphaBetaPruning(self, board, depth_left, alpha = -999999, beta = +999999):
         if depth_left == 0:
-            return self.__evaluateBoard(board)
+            return self.__evaluateBoard(board), board
         else:
             depth_left = depth_left - 1
             if self.color == board.turn:
+                bestMove = None
                 bestScore = -99999999999
                 for move in board.legal_moves:
                     board.push(move)
-                    score = self.__AlphaBetaPruning(board, depth_left, alpha, beta)
+                    score, unused = self.__AlphaBetaPruning(board, depth_left, alpha, beta)
                     board.pop()
-                    bestScore = max(bestScore, score)
+                    if(bestScore < score):
+                        bestScore = score
+                        bestMove = move
+                    #bestScore = max(bestScore, score)
                     alpha = max(alpha, bestScore)
                     if beta <= alpha:
                         break
-                return bestScore
+                return bestScore, bestMove
             else:
+                worstMove = None
                 worstScore = 99999999999
                 for move in board.legal_moves:
                     board.push(move)
-                    score = self.__AlphaBetaPruning(board, depth_left, alpha, beta)
+                    score, unused = self.__AlphaBetaPruning(board, depth_left, alpha, beta)
                     board.pop()
-                    worstScore = min(worstScore, score)
+                    #worstScore = min(worstScore, score)
+                    if(worstScore > score):
+                        worstScore = score
+                        worstMove = move
                     beta = min(beta, worstScore)
                     if beta <= alpha:
                         break
-                return worstScore
+                return worstScore, worstMove
 
     def __evaluateBoard(self, board):
         ValueOfPiecesScore =   Pieces.evaluateValueOfPiecesScore(board, self.color) * self.getWeight(Weights.PICES_SCORE)
