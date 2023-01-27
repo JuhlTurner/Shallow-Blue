@@ -1,7 +1,7 @@
 import chess
 import os
 
-from Bots.gen2_v3 import Bot as Student
+from Bots.gen2_v4 import Bot as Student
 from Bots.gen1_v10 import Bot as Opponent
 import Evaluators.Pieces.v1 as Pieces
 

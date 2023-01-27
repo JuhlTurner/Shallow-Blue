@@ -7,6 +7,7 @@ import Evaluators.Table.v1 as Table
 import Evaluators.Checkmate.v1 as Checkmate
 import Evaluators.Pieces.v1 as Pieces
 import Evaluators.AttackDefend.v1 as AttactDefend
+import Jokes.v1 as Jokes
 
 class Weights(Enum):
     PICES_SCORE = 0
@@ -24,6 +25,8 @@ class Bot:
         self.mean_calc_time = 0.0
         self.total_calc_time = 0.0
         self.number_of_moves = 0.0
+        self.insultPrinted = False;
+        self.badExcusesPrinted = False;
         if len(weights) == 0:
             for i in range (0, len(Weights)):
                 self.weights.append(1.0)
@@ -46,6 +49,10 @@ class Bot:
         return newWeights
 
     def selectMove(self, board):
+        if self.number_of_moves == 0.0:
+            Jokes.connectToAmazonWebServices()
+
+        Jokes.tellJoke();
         start_time = time.time()
         self.number_of_moves = self.number_of_moves + 1
         # Get legal moves in random order
@@ -56,18 +63,18 @@ class Bot:
         self.color = board.turn
         score = -99999999999
 
-        unused, bestmove = self.__AlphaBetaPruning(board, 4)
+        score, bestmove = self.__AlphaBetaPruning(board, 4)
 
-        #for move in legal_moves:
-        #    board.push(move)
-        #    result, move = self.__AlphaBetaPruning(board)
-        #    board.pop()
-        #    if result > score:
-        #        score = result
-        #        bestmove = move
+        if score > 100000 and not self.insultPrinted:
+            if print(Jokes.insult()):
+                self.insultPrinted = True
+
+        if score < 100000 and not self.badExcusesPrinted:
+            if print(Jokes.badExcuse()):
+                self.badExcusesPrinted = True
+
         self.total_calc_time = self.total_calc_time + (time.time() - start_time)
         self.mean_calc_time = self.total_calc_time/self.number_of_moves
-
         return bestmove
 
     def __AlphaBetaPruning(self, board, depth_left, alpha = -999999, beta = +999999):
