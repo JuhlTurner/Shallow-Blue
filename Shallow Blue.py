@@ -1,4 +1,4 @@
-from chessbots.v10.bot import Bot # import Chess bot
+from Bots.gen2_v4 import Bot # import Chess bot
 import chess
 
 def main():
@@ -32,8 +32,8 @@ def main():
         elif cmds[0] == "quit":
             print("Bye.")
             exitFlag = True
-        else:
-            print("info string Received unknown cmds: %s" % str(cmds))
+        #else:
+        #    print("info string Received unknown cmds: %s" % str(cmds))
 
 if __name__ == '__main__':
     main()

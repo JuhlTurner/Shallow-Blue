@@ -52,7 +52,7 @@ class Bot:
         if self.number_of_moves == 0.0:
             Jokes.connectToAmazonWebServices()
 
-        Jokes.tellJoke();
+        joke_told = Jokes.tellJoke();
         start_time = time.time()
         self.number_of_moves = self.number_of_moves + 1
         # Get legal moves in random order
@@ -65,11 +65,11 @@ class Bot:
 
         score, bestmove = self.__AlphaBetaPruning(board, 4)
 
-        if score > 100000 and not self.insultPrinted:
+        if score < 100000 and not self.insultPrinted and not joke_told:
             if print(Jokes.insult()):
                 self.insultPrinted = True
 
-        if score < 100000 and not self.badExcusesPrinted:
+        if score > 100000 and not self.badExcusesPrinted and not joke_told:
             if print(Jokes.badExcuse()):
                 self.badExcusesPrinted = True
 

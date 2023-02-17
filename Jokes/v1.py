@@ -16,29 +16,33 @@ excuses = ["I play worse against lower-rated AI's",
            "I play better as your color",
            "I couldn't remember...was I playing black or white?"]
 
-probability = 0.05
+Anouncement = "Shallow Blue: "
+
+probability = 0.5
+
 
 def tellJoke():
     if random.random() < probability:
-        print("info string " + random.choice(jokes));
-        #time.sleep(3)
+        print("info string " + Anouncement + random.choice(jokes));
+        return True
+    else:
+        return False
 
 def insult():
-    if random.random() < 0.15:
-        print("info string " + random.choice(insults));
-        time.sleep(5)
+    if random.random() < 0.5:
+        print("info string " + Anouncement + random.choice(insults));
         return True
     return False
 
 def badExcuse():
-    if random.random() < 0.15:
-        print("info string " + random.choice(excuses));
-        time.sleep(5)
+    if random.random() < 0.5:
+        print("info string " + Anouncement + random.choice(excuses));
         return True
     return False
 
 def connectToAmazonWebServices():
     if random.random() < probability:
-        print("info string Connecting to Amazon Web Services for additional processing power ...");
+        print("info string " + Anouncement + "Connecting to Amazon Web Services for additional processing power ...");
+        print("info string " + Anouncement + "Connection successful!");
         time.sleep(5)
         
