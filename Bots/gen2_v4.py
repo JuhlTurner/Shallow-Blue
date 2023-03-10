@@ -85,7 +85,6 @@ class Bot:
             depth = self.getDepthFromTime(wtime,btime)
         else:
             depth = self.getDepthFromTime(btime,wtime)
-        print("info string %d" % depth)
 
         score, bestmove = self.__AlphaBetaPruning(board, depth)
 

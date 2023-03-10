@@ -24,8 +24,6 @@ def main():
                 if (len(cmds) > 2) and (cmds[2] == "moves"):
                     for i in range(3, len(cmds)):
                         board.push_uci(cmds[i])
-                else:
-                    board = chess.Board()
                 
         elif cmds[0] == "go":
             wtime = 0
