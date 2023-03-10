@@ -20,6 +20,7 @@ class Bot:
         self.color = 0
         self.mean_calc_time = 0.0
         self.total_calc_time = 0.0
+        self.last_move_calc_time = 0.0
         self.number_of_moves = 0.0
         if len(weights) == 0:
             for i in range (0, len(Weights)):
@@ -42,7 +43,7 @@ class Bot:
             newWeights.append(weight + random.uniform(-dist, dist))
         return newWeights
 
-    def selectMove(self, board):
+    def selectMove(self, board, wtime, btime):
         start_time = time.time()
         self.number_of_moves += 1
         bestmove = random.choice(list(board.legal_moves))
@@ -55,7 +56,8 @@ class Bot:
             if result > score:
                 score = result
                 bestmove = move
-        self.total_calc_time = self.total_calc_time + (time.time() - start_time)
+        self.last_move_calc_time = (time.time() - start_time)
+        self.total_calc_time = self.total_calc_time + self.last_move_calc_time
         self.mean_calc_time = self.total_calc_time/self.number_of_moves
         return bestmove
 

@@ -26,8 +26,18 @@ def main():
                         board.push_uci(cmds[i])
                 else:
                     board = chess.Board()
-                move = engine.selectMove(board) # make a move 
-                print("bestmove " + move.uci())
+                
+        elif cmds[0] == "go":
+            wtime = 0
+            btime = 0
+            for i in range(len(cmds)):
+                if cmds[i] == "wtime":
+                    wtime = cmds[i+1]
+                elif cmds[i] == "btime":
+                    btime = cmds[i+1]
+
+            move = engine.selectMove(board, wtime, btime) # make a move 
+            print("bestmove " + move.uci())
 
         elif cmds[0] == "quit":
             print("Bye.")

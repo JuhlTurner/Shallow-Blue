@@ -24,6 +24,7 @@ class Bot:
         self.color = 0
         self.mean_calc_time = 0.0
         self.total_calc_time = 0.0
+        self.last_move_calc_time = 0.0
         self.number_of_moves = 0.0
         self.insultPrinted = False;
         self.badExcusesPrinted = False;
@@ -48,7 +49,23 @@ class Bot:
             newWeights.append(weight + random.uniform(-dist, dist))
         return newWeights
 
-    def selectMove(self, board):
+    def getDepthFromTime(self, time_left, opponent_time_left):
+        if int(time_left) == 0 or int(opponent_time_left) == 0:
+            return 4
+
+        if int(time_left) < 1500:
+            return 2
+        
+        if int(time_left) < 4000:
+            return 3
+        
+        if (int(time_left) - int(opponent_time_left)) > 10000:
+            if int(time_left) > 60000:
+                return 5
+
+        return 4
+
+    def selectMove(self, board, wtime, btime):
         if self.number_of_moves == 0.0:
             Jokes.connectToAmazonWebServices()
 
@@ -63,7 +80,14 @@ class Bot:
         self.color = board.turn
         score = -99999999999
 
-        score, bestmove = self.__AlphaBetaPruning(board, 4)
+        depth = 4
+        if self.color == chess.WHITE:
+            depth = self.getDepthFromTime(wtime,btime)
+        else:
+            depth = self.getDepthFromTime(btime,wtime)
+        print("info string %d" % depth)
+
+        score, bestmove = self.__AlphaBetaPruning(board, depth)
 
         if score < 100000 and not self.insultPrinted and not joke_told:
             if print(Jokes.insult()):
@@ -72,8 +96,8 @@ class Bot:
         if score > 100000 and not self.badExcusesPrinted and not joke_told:
             if print(Jokes.badExcuse()):
                 self.badExcusesPrinted = True
-
-        self.total_calc_time = self.total_calc_time + (time.time() - start_time)
+        self.last_move_calc_time = (time.time() - start_time)
+        self.total_calc_time = self.total_calc_time + self.last_move_calc_time
         self.mean_calc_time = self.total_calc_time/self.number_of_moves
         return bestmove
 

@@ -42,7 +42,5 @@ def badExcuse():
 
 def connectToAmazonWebServices():
     if random.random() < probability:
-        print("info string " + Anouncement + "Connecting to Amazon Web Services for additional processing power ...");
-        print("info string " + Anouncement + "Connection successful!");
-        time.sleep(5)
+        print("info string " + Anouncement + "Connecting to Amazon Web Services for additional processing power ... Connection successful!");
         

@@ -32,10 +32,10 @@ def playGame(student, opponent, numberOfGames):
         while not board.is_game_over():
             playerName = ""
             if board.turn == studentcolor:
-                move = student.selectMove(board)
+                move = student.selectMove(board, 0, 0)
                 playerName = student.name
             else:
-                move = opponent.selectMove(board)
+                move = opponent.selectMove(board, 0, 0)
                 playerName = opponent.name
 
             board.push(move)
@@ -44,7 +44,7 @@ def playGame(student, opponent, numberOfGames):
             opponent.totalScore = Pieces.getValueOfPieces(board, not studentcolor)
             print("Game %d of %d" % (i+1, numberOfGames))
             print(board)
-            print("Score:\n\t%s: %d (Wins: %d, mean move time: %s) \n\t%s: %d (Wins: %d, mean move time: %s)" % (student.name, student.totalScore, student.numberOfWins, student.mean_calc_time, opponent.name, opponent.totalScore, opponent.numberOfWins, opponent.mean_calc_time))
+            print("Score:\n\t%s: %d (Wins: %d, mean move time: %s, last move time %s) \n\t%s: %d (Wins: %d, mean move time: %s, last move time %s)" % (student.name, student.totalScore, student.numberOfWins, student.mean_calc_time, student.last_move_calc_time, opponent.name, opponent.totalScore, opponent.numberOfWins, opponent.mean_calc_time, opponent.last_move_calc_time))
 
         if board.result() == "1-0" and studentcolor == chess.WHITE:
             student.numberOfWins += 1
