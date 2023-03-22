@@ -26,16 +26,16 @@ def playGame(student, opponent, numberOfGames):
     studentcolor = chess.WHITE
 
     for i in range(numberOfGames):        
-        #studentcolor = not studentcolor
+        studentcolor = not studentcolor
         board = chess.Board()
 
         while not board.is_game_over():
             playerName = ""
             if board.turn == studentcolor:
-                move = student.selectMove(board, 0, 0)
+                move = student.selectMove(board, 1, 1)
                 playerName = student.name
             else:
-                move = opponent.selectMove(board, 0, 0)
+                move = opponent.selectMove(board, 1, 1)
                 playerName = opponent.name
 
             board.push(move)
@@ -45,7 +45,7 @@ def playGame(student, opponent, numberOfGames):
             print("Game %d of %d" % (i+1, numberOfGames))
             print(board)
             print("Score:\n\t%s: %d (Wins: %d, mean move time: %s, last move time %s) \n\t%s: %d (Wins: %d, mean move time: %s, last move time %s)" % (student.name, student.totalScore, student.numberOfWins, student.mean_calc_time, student.last_move_calc_time, opponent.name, opponent.totalScore, opponent.numberOfWins, opponent.mean_calc_time, opponent.last_move_calc_time))
-
+            print(studentcolor)
         if board.result() == "1-0" and studentcolor == chess.WHITE:
             student.numberOfWins += 1
         elif board.result() == "0-1" and studentcolor == chess.BLACK:

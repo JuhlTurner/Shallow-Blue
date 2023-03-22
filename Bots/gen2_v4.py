@@ -26,8 +26,9 @@ class Bot:
         self.total_calc_time = 0.0
         self.last_move_calc_time = 0.0
         self.number_of_moves = 0.0
-        self.insultPrinted = False;
-        self.badExcusesPrinted = False;
+        self.insultPrinted = False
+        self.badExcusesPrinted = False
+        self.comments = True
         if len(weights) == 0:
             for i in range (0, len(Weights)):
                 self.weights.append(1.0)
@@ -66,10 +67,12 @@ class Bot:
         return 4
 
     def selectMove(self, board, wtime, btime):
-        if self.number_of_moves == 0.0:
+        if self.number_of_moves == 0.0 and self.comments:
             Jokes.connectToAmazonWebServices()
-
-        joke_told = Jokes.tellJoke();
+        
+        joke_told = self.comments
+        if joke_told:
+            joke_told = Jokes.tellJoke();
         start_time = time.time()
         self.number_of_moves = self.number_of_moves + 1
         # Get legal moves in random order
@@ -88,11 +91,11 @@ class Bot:
 
         score, bestmove = self.__AlphaBetaPruning(board, depth)
 
-        if score < 100000 and not self.insultPrinted and not joke_told:
+        if score < 100000 and not self.insultPrinted and not joke_told and self.comments:
             if print(Jokes.insult()):
                 self.insultPrinted = True
 
-        if score > 100000 and not self.badExcusesPrinted and not joke_told:
+        if score > 100000 and not self.badExcusesPrinted and not joke_told and self.comments:
             if print(Jokes.badExcuse()):
                 self.badExcusesPrinted = True
         self.last_move_calc_time = (time.time() - start_time)

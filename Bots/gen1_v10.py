@@ -24,7 +24,7 @@ class Bot:
         self.number_of_moves = 0.0
         if len(weights) == 0:
             for i in range (0, len(Weights)):
-                self.weights.append(1.0)
+                self.weights.append(1.1)
 
     def getWeight(self, id):
         if len(self.weights) > id.value:
@@ -72,7 +72,7 @@ class Bot:
     #                bestScore = score
     #        return bestScore
 
-    def __evaluateBoardDepth(self, board, depth_left = 2):
+    def __evaluateBoardDepth(self, board, depth_left = 1):
         if depth_left == 0:
             return self.__evaluateBoard(board)
         else:
