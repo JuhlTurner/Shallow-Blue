@@ -101,16 +101,19 @@ class Bot:
         self.last_move_calc_time = (time.time() - start_time)
         self.total_calc_time = self.total_calc_time + self.last_move_calc_time
         self.mean_calc_time = self.total_calc_time/self.number_of_moves
+        if bestmove == None:
+            print("info string Shallow Blue: ERROR!! No Move found! (Picking random legal move)")
+            bestmove = legal_moves[0]
         return bestmove
 
-    def __AlphaBetaPruning(self, board, depth_left, alpha = -999999, beta = +999999):
+    def __AlphaBetaPruning(self, board, depth_left, alpha = -9999999999, beta = 9999999999):
         if depth_left == 0:
             return self.__evaluateBoard(board), board
         else:
             depth_left = depth_left - 1
             if self.color == board.turn:
                 bestMove = None
-                bestScore = -99999999999
+                bestScore = -999999999999999
                 for move in board.legal_moves:
                     board.push(move)
                     score, unused = self.__AlphaBetaPruning(board, depth_left, alpha, beta)
@@ -125,7 +128,7 @@ class Bot:
                 return bestScore, bestMove
             else:
                 worstMove = None
-                worstScore = 99999999999
+                worstScore = 999999999999999
                 for move in board.legal_moves:
                     board.push(move)
                     score, unused = self.__AlphaBetaPruning(board, depth_left, alpha, beta)

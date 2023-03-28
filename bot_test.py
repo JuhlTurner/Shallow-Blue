@@ -2,7 +2,7 @@ import chess
 import os
 
 from Bots.gen2_v4 import Bot as Student
-from Bots.gen1_v10 import Bot as Opponent
+from Bots.gen2_v4 import Bot as Opponent
 import Evaluators.Pieces.v1 as Pieces
 
 def clearConsole():
@@ -32,10 +32,10 @@ def playGame(student, opponent, numberOfGames):
         while not board.is_game_over():
             playerName = ""
             if board.turn == studentcolor:
-                move = student.selectMove(board, 1, 1)
+                move = student.selectMove(board, 3500, 3500)
                 playerName = student.name
             else:
-                move = opponent.selectMove(board, 1, 1)
+                move = opponent.selectMove(board, 3500, 3500)
                 playerName = opponent.name
 
             board.push(move)
@@ -44,7 +44,7 @@ def playGame(student, opponent, numberOfGames):
             opponent.totalScore = Pieces.getValueOfPieces(board, not studentcolor)
             print("Game %d of %d" % (i+1, numberOfGames))
             print(board)
-            print("Score:\n\t%s: %d (Wins: %d, mean move time: %s, last move time %s) \n\t%s: %d (Wins: %d, mean move time: %s, last move time %s)" % (student.name, student.totalScore, student.numberOfWins, student.mean_calc_time, student.last_move_calc_time, opponent.name, opponent.totalScore, opponent.numberOfWins, opponent.mean_calc_time, opponent.last_move_calc_time))
+            print("Score:\n\tStudent (%s): %d (Wins: %d, mean move time: %s, last move time %s) \n\tOpponent (%s): %d (Wins: %d, mean move time: %s, last move time %s)" % (student.name, student.totalScore, student.numberOfWins, student.mean_calc_time, student.last_move_calc_time, opponent.name, opponent.totalScore, opponent.numberOfWins, opponent.mean_calc_time, opponent.last_move_calc_time))
             print(studentcolor)
         if board.result() == "1-0" and studentcolor == chess.WHITE:
             student.numberOfWins += 1
@@ -62,7 +62,7 @@ def playGame(student, opponent, numberOfGames):
     return student.numberOfWins - opponent.numberOfWins
     
 def main():
-    playGame(Student(),Opponent(),20)
+    playGame(Student([-0.15117937224262556, 0.8290223513015835, -0.562518599217871, -0.3333520170633604]),Opponent(),20)
     return
 
     

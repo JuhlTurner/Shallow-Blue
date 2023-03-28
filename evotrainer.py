@@ -12,6 +12,12 @@ id = 0
 def clearConsole():
     os.system('cls')
 
+def lineUpAndClear(lines = 1):
+    LINE_UP = '\033[1A'
+    LINE_CLEAR = '\x1b[2K'
+    for _ in range(lines):
+        print(LINE_UP, end=LINE_CLEAR)
+
 def getValueOfPieces(board, player):
     value = len(board.pieces(chess.PAWN, player)) * 1
     value += len(board.pieces(chess.KNIGHT, player)) * 3
@@ -40,15 +46,15 @@ def playGame(student, opponent, numberOfGames):
         board = chess.Board()
 
         while not board.is_game_over():
-            playerName = ""
             if board.turn == studentcolor:
-                move = student.selectMove(board,0,0)
-                playerName = student.name
+                move = student.selectMove(board,3500,3500)
             else:
-                move = opponent.selectMove(board,0,0)
-                playerName = opponent.name
-
+                move = opponent.selectMove(board,3500,3500)
             board.push(move)
+            print(board)
+            LINE_UP = '\033[1A'
+            LINE_CLEAR = '\x1b[2K'
+            lineUpAndClear(8)
 
         if board.result() == "1-0" and studentcolor == chess.WHITE:
             student.numberOfWins += 1
@@ -70,8 +76,10 @@ def evaluateBots(bots):
         for y, bot2 in enumerate(bots):
             if x < y:
                 numberOfCombinationsCompleate = numberOfCombinationsCompleate + 1
-                print ("\t\t%d%% complete" % (float(numberOfCombinationsCompleate)*100/float(numberOfCombinations)), end="\r")
-                playGame(bot1,bot2,1)
+                print ("%d%% complete (Evaluation %d of %d)" % (float(numberOfCombinationsCompleate)*100/float(numberOfCombinations),numberOfCombinationsCompleate,numberOfCombinations))
+                print("==Bot %d vs Bot %d==" % (x,y))
+                playGame(bot1,bot2,4)
+                lineUpAndClear(3)
 
 def sortBots(bots):
     bots.sort(key=getScore, reverse=True)
@@ -100,17 +108,18 @@ def evoTrainer(bots, numberOfGens):
         print("Saving weights to: %s" % result_file_name)
 
         print("Generation %d of %d" %(i+1,numberOfGens))
-        print("\tEvaluating fitness of population ...")
+        print("Evaluating fitness of population ...")
         evaluateBots(bots)
-        print("\tSelecting the fittest individuals for reproduction ...")
+        print("Selecting the fittest individuals for reproduction ...")
         sortBots(bots)
         bestWeights.append(copy.deepcopy(bots[0].weights))
-        print("\tBreed new individuals and Replace the least-fit individuals of the population ...")
+        print("Breed new individuals and Replace the least-fit individuals of the population ...")
         breedBots(bots)
-        print("\tSaving best individual to disk (%s) ..." % result_file_name)
+        print("Saving best individual to disk (%s) ..." % result_file_name)
         saveResultsToFile(result_file_name,bestWeights)
 
     clearConsole()
+    print("Saved best weights to: %s" % result_file_name)
     print ("Best Weights:")
     f = open("results.txt", "w")
     for gen, weights in  enumerate(bestWeights):
@@ -118,7 +127,7 @@ def evoTrainer(bots, numberOfGens):
         print(weights)
         f.write(weights)
         f.write("\n")
-    print("Saved best weights to: %s" % result_file_name)
+    
 
 
 def breedBots(bots):
@@ -127,7 +136,13 @@ def breedBots(bots):
         bot = Bot()
         for index, weight in enumerate(bot.weights):
             oldval = float(bots[random.randint(0, cutoff-1)].weights[index])
-            bots[bot_index].weights[index] = oldval + random.uniform(0.0, 0.1)
+            newval = oldval + random.uniform(-0.1, 0.1)
+            if newval > 1.0:
+                newval = 1.0
+            elif newval < -1.0:
+                newval = -1.0
+            bots[bot_index].weights[index] = newval
+
 
 
 def main():
